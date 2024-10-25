@@ -27,7 +27,7 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
-SPEED = 20
+SPEED = 10
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -48,7 +48,7 @@ class GameObject():
         self.body_color = None
 
     def draw(self):
-        """Метод-загрушка отрисовывания объектов."""
+        """Метод-заглушка отрисовывания объектов."""
         pass
 
 
@@ -58,12 +58,17 @@ class Apple(GameObject):
     def __init__(self):
         super().__init__()
         self.body_color = APPLE_COLOR
-        self.randomize_position()
+        snake = Snake()
+        self.randomize_position(snake)
 
-    def randomize_position(self):
+    def randomize_position(self, snake):
         """Метод для рандомного спавна яблока."""
         self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                          randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
+        
+        while self.position in snake.positions:
+            self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
+                             randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
 
     def draw(self):
         """Переопределяем метод draw для яблока."""
@@ -134,13 +139,17 @@ def handle_keys(game_object):
             pygame.quit()
             raise SystemExit
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and game_object.direction != DOWN:
+            if ((event.key == pygame.K_UP or event.key == pygame.K_w)
+                    and game_object.direction != DOWN):
                 game_object.next_direction = UP
-            elif event.key == pygame.K_DOWN and game_object.direction != UP:
+            elif ((event.key == pygame.K_DOWN or event.key == pygame.K_s)
+                  and game_object.direction != UP):
                 game_object.next_direction = DOWN
-            elif event.key == pygame.K_LEFT and game_object.direction != RIGHT:
+            elif ((event.key == pygame.K_LEFT or event.key == pygame.K_a)
+                  and game_object.direction != RIGHT):
                 game_object.next_direction = LEFT
-            elif event.key == pygame.K_RIGHT and game_object.direction != LEFT:
+            elif ((event.key == pygame.K_RIGHT or event.key == pygame.K_d)
+                  and game_object.direction != LEFT):
                 game_object.next_direction = RIGHT
 
 
@@ -159,7 +168,7 @@ def main():
         snake.move(apple)
         if snake.get_head_position() == apple.position:
             snake.length += 1
-            apple.randomize_position()
+            apple.randomize_position(snake)
         else:
             snake.positions.pop()
 
