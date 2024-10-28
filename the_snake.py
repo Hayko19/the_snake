@@ -57,6 +57,7 @@ class Apple(GameObject):
 
     def __init__(self, snake):
         super().__init__(APPLE_COLOR)
+        self.occupied = []
         self.randomize_position(snake)
 
     def randomize_position(self, snake):
