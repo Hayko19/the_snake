@@ -43,29 +43,27 @@ clock = pygame.time.Clock()
 class GameObject():
     """Родительский класс."""
 
-    def __init__(self) -> None:
+    def __init__(self, color) -> None:
         self.position = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
-        self.body_color = None
+        self.body_color = color
 
     def draw(self):
         """Метод-заглушка отрисовывания объектов."""
-        pass
+        raise NotImplementedError
 
 
 class Apple(GameObject):
     """Класс яблока."""
 
-    def __init__(self):
-        super().__init__()
-        self.body_color = APPLE_COLOR
-        snake = Snake()
+    def __init__(self, snake):
+        super().__init__(APPLE_COLOR)
         self.randomize_position(snake)
 
     def randomize_position(self, snake):
         """Метод для рандомного спавна яблока."""
         self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                          randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
-        
+
         while self.position in snake.positions:
             self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                              randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
@@ -81,12 +79,11 @@ class Snake(GameObject):
     """Класс змейки."""
 
     def __init__(self):
-        super().__init__()
-        self.body_color = SNAKE_COLOR
+        super().__init__(SNAKE_COLOR)
         self.length = 1
         self.direction = RIGHT
         self.next_direction = None
-        self.positions = [(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)]
+        self.positions = [self.position]
 
     def get_head_position(self):
         """Метод возвращающий позицию головы змейки."""
@@ -95,7 +92,7 @@ class Snake(GameObject):
     def draw(self):
         """Переопределяем метод draw для змейки."""
         for position in self.positions:
-            rect = (pygame.Rect(position, (GRID_SIZE, GRID_SIZE)))
+            rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
             pygame.draw.rect(screen, self.body_color, rect)
             pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
@@ -158,8 +155,8 @@ def main():
     # Инициализация PyGame:
     pygame.init()
     # Тут нужно создать экземпляры классов.
-    apple = Apple()
     snake = Snake()
+    apple = Apple(snake)
 
     while True:
         clock.tick(SPEED)
@@ -176,6 +173,7 @@ def main():
         for position in snake.positions[1:]:  # Пропускаем голову
             if snake.get_head_position() == position:
                 snake.reset()  # Сбрасываем игру
+
         screen.fill(BOARD_BACKGROUND_COLOR)
         apple.draw()
         snake.draw()
