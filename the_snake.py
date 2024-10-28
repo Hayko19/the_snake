@@ -106,19 +106,10 @@ class Snake(GameObject):
     def move(self, apple):
         """Метод отвечающий за движение змейки."""
         head_x, head_y = self.get_head_position()
+        dir_x, dir_y = self.direction
 
-        head_x += self.direction[0] * GRID_SIZE
-        head_y += self.direction[1] * GRID_SIZE
-
-        if head_x < 0:
-            head_x = SCREEN_WIDTH - GRID_SIZE
-        elif head_x >= SCREEN_WIDTH:
-            head_x = 0
-
-        if head_y < 0:
-            head_y = SCREEN_HEIGHT - GRID_SIZE
-        elif head_y >= SCREEN_HEIGHT:
-            head_y = 0
+        head_x = (head_x + dir_x * GRID_SIZE) % SCREEN_WIDTH
+        head_y = (head_y + dir_y * GRID_SIZE) % SCREEN_HEIGHT
 
         self.positions.insert(0, (head_x, head_y))
 
@@ -172,7 +163,7 @@ def main():
 
     # Проверка столкновения с телом
         for position in snake.positions[1:]:  # Пропускаем голову
-            if snake.get_head_position() == position:
+            if snake.get_head_position() in snake.positions[1:]:
                 snake.reset()  # Сбрасываем игру
 
         screen.fill(BOARD_BACKGROUND_COLOR)
@@ -183,3 +174,20 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# Метод draw класса Snake
+# def draw(self):
+#     for position in self.positions[:-1]:
+#         rect = (pygame.Rect(position, (GRID_SIZE, GRID_SIZE)))
+#         pygame.draw.rect(screen, self.body_color, rect)
+#         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+#     # Отрисовка головы змейки
+#     head_rect = pygame.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
+#     pygame.draw.rect(screen, self.body_color, head_rect)
+#     pygame.draw.rect(screen, BORDER_COLOR, head_rect, 1)
+
+#     # Затирание последнего сегмента
+#     if self.last:
+#         last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
+#         pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
