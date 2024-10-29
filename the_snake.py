@@ -43,7 +43,7 @@ clock = pygame.time.Clock()
 class GameObject():
     """Родительский класс."""
 
-    def __init__(self, color) -> None:
+    def __init__(self, color=(255, 255, 255)) -> None:
         self.position = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
         self.body_color = color
 
@@ -61,10 +61,13 @@ class GameObject():
 class Apple(GameObject):
     """Класс яблока."""
 
-    def __init__(self, snake):
+    def __init__(self, snake=None):
         super().__init__(APPLE_COLOR)
         self.occupied = []
-        self.randomize_position(snake)
+        if snake is not None:
+            self.randomize_position(snake)
+        else:
+            self.position = (0, 0)
 
     def randomize_position(self, snake):
         """Метод для рандомного спавна яблока."""
