@@ -27,7 +27,7 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
-SPEED = 10
+SPEED = 20
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -47,8 +47,14 @@ class GameObject():
         self.position = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
         self.body_color = color
 
+    def draw_cell(self, position, color):
+        """Отрисовка сегмента с заданной позицией и цветом."""
+        rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, color, rect)
+        pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
     def draw(self):
-        """Метод-заглушка отрисовывания объектов."""
+        """Метод - заглушка для переопределения."""
         raise NotImplementedError
 
 
@@ -85,6 +91,7 @@ class Snake(GameObject):
         self.direction = RIGHT
         self.next_direction = None
         self.positions = [self.position]
+        self.last = None
 
     def get_head_position(self):
         """Метод возвращающий позицию головы змейки."""
@@ -93,9 +100,11 @@ class Snake(GameObject):
     def draw(self):
         """Переопределяем метод draw для змейки."""
         for position in self.positions:
-            rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
-            pygame.draw.rect(screen, self.body_color, rect)
-            pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+            self.draw_cell(position, self.body_color)
+
+        # Затираем последний сегмент, если он существует
+        if self.last:
+            self.draw_cell(self.last, BOARD_BACKGROUND_COLOR)
 
     def update_direction(self):
         """Метод обрабатывающий следующее направление змейки."""
@@ -174,20 +183,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# Метод draw класса Snake
-# def draw(self):
-#     for position in self.positions[:-1]:
-#         rect = (pygame.Rect(position, (GRID_SIZE, GRID_SIZE)))
-#         pygame.draw.rect(screen, self.body_color, rect)
-#         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
-
-#     # Отрисовка головы змейки
-#     head_rect = pygame.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
-#     pygame.draw.rect(screen, self.body_color, head_rect)
-#     pygame.draw.rect(screen, BORDER_COLOR, head_rect, 1)
-
-#     # Затирание последнего сегмента
-#     if self.last:
-#         last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
-#         pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
