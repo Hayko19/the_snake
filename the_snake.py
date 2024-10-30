@@ -17,6 +17,9 @@ RIGHT = (1, 0)
 # Цвет фона - черный:
 BOARD_BACKGROUND_COLOR = (0, 0, 0)
 
+# Цвет по умолчанию
+color = (255, 255, 255)
+
 # Цвет границы ячейки
 BORDER_COLOR = (93, 216, 228)
 
@@ -43,7 +46,7 @@ clock = pygame.time.Clock()
 class GameObject():
     """Родительский класс."""
 
-    def __init__(self, color=(255, 255, 255)) -> None:
+    def __init__(self, color) -> None:
         self.position = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
         self.body_color = color
 
