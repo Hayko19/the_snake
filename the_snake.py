@@ -17,9 +17,6 @@ RIGHT = (1, 0)
 # Цвет фона - черный:
 BOARD_BACKGROUND_COLOR = (0, 0, 0)
 
-# Цвет по умолчанию
-color = (255, 255, 255)
-
 # Цвет границы ячейки
 BORDER_COLOR = (93, 216, 228)
 
@@ -46,7 +43,7 @@ clock = pygame.time.Clock()
 class GameObject():
     """Родительский класс."""
 
-    def __init__(self, color) -> None:
+    def __init__(self, color = (255, 255, 255)) -> None:
         self.position = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
         self.body_color = color
 
@@ -120,7 +117,7 @@ class Snake(GameObject):
             self.direction = self.next_direction
             self.next_direction = None
 
-    def move(self, apple):
+    def move(self):
         """Метод отвечающий за движение змейки."""
         head_x, head_y = self.get_head_position()
         dir_x, dir_y = self.direction
@@ -175,7 +172,7 @@ def main():
         clock.tick(SPEED)
         handle_keys(snake)
         snake.update_direction()
-        snake.move(apple)
+        snake.move()
 
         # Проверка на съеденное яблоко
         if snake.get_head_position() == apple.position:
