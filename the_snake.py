@@ -101,13 +101,13 @@ class Snake(GameObject):
         return self.positions[0]
 
     def draw(self):
-        """Переопределяем метод draw для змейки."""
+        """Отрисовка змейки на экране"""
+        # Рисование всех частей тела
         for position in self.positions:
-            self.draw_cell(position, self.body_color)
-
-        # Затираем последний сегмент, если он существует
+            self.draw_cell(position, SNAKE_COLOR)
         if self.last:
-            self.draw_cell(self.last, BOARD_BACKGROUND_COLOR)
+            last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
+            pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
 
     def update_direction(self):
         """Метод обрабатывающий следующее направление змейки."""
@@ -124,6 +124,9 @@ class Snake(GameObject):
         head_y = (head_y + dir_y * GRID_SIZE) % SCREEN_HEIGHT
 
         self.positions.insert(0, (head_x, head_y))
+
+        if len(self.positions) > self.length:
+            self.last = self.positions.pop()
 
     def reset(self):
         """Метод для сброса положения змейки."""
@@ -156,31 +159,31 @@ def handle_keys(game_object):
 
 def main():
     """Запускает основной игровой цикл."""
-    # Инициализация PyGame:
     pygame.init()
-    # Тут нужно создать экземпляры классов.
     snake = Snake()
     apple = Apple(snake)
 
+    # Заполнение фона один раз перед началом игры
+    screen.fill(BOARD_BACKGROUND_COLOR)
+
     while True:
         clock.tick(SPEED)
-        handle_keys(snake)
-        snake.update_direction()
-        snake.move(apple)
+        handle_keys(snake)            
+        snake.update_direction()       
+        snake.move(apple)              
+
+        # Проверка на съеденное яблоко
         if snake.get_head_position() == apple.position:
             snake.length += 1
             apple.randomize_position(snake)
-        else:
-            snake.positions.pop()
 
-    # Проверка столкновения с телом
-        for position in snake.positions[1:]:  # Пропускаем голову
-            if snake.get_head_position() in snake.positions[1:]:
-                snake.reset()  # Сбрасываем игру
+        # Проверка на столкновение с телом
+        if snake.get_head_position() in snake.positions[1:]:  
+            snake.reset()               
+            screen.fill(BOARD_BACKGROUND_COLOR)  
 
-        screen.fill(BOARD_BACKGROUND_COLOR)
-        apple.draw()
-        snake.draw()
+        apple.draw()            
+        snake.draw()  
         pygame.display.update()
 
 
