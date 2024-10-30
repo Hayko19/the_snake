@@ -61,28 +61,30 @@ class GameObject():
 class Apple(GameObject):
     """Класс яблока."""
 
-    def __init__(self, snake=None):
+    def __init__(self):
         super().__init__(APPLE_COLOR)
         self.occupied = []
-        if snake is not None:
-            self.randomize_position(snake)
-        else:
-            self.position = (0, 0)
+        self.randomize_position()
 
-    def randomize_position(self, snake):
+    def randomize_position(self):
         """Метод для рандомного спавна яблока."""
-        self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
-                         randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
-
-        while self.position in snake.positions:
+        while True:
             self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
                              randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
+
+            # Проверяем, занята ли ячейка
+            if self.position not in self.occupied:
+                break
 
     def draw(self):
         """Переопределяем метод draw для яблока."""
         rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+    def update_occupied_cells(self, positions):
+        """Обновляет список занятых ячеек."""
+        self.occupied = positions
 
 
 class Snake(GameObject):
@@ -161,29 +163,30 @@ def main():
     """Запускает основной игровой цикл."""
     pygame.init()
     snake = Snake()
-    apple = Apple(snake)
+    apple = Apple()
 
     # Заполнение фона один раз перед началом игры
     screen.fill(BOARD_BACKGROUND_COLOR)
 
     while True:
         clock.tick(SPEED)
-        handle_keys(snake)            
-        snake.update_direction()       
-        snake.move(apple)              
+        handle_keys(snake)
+        snake.update_direction()
+        snake.move(apple)
 
         # Проверка на съеденное яблоко
         if snake.get_head_position() == apple.position:
             snake.length += 1
-            apple.randomize_position(snake)
+            apple.randomize_position()
+            apple.update_occupied_cells(snake.positions)
 
         # Проверка на столкновение с телом
-        if snake.get_head_position() in snake.positions[1:]:  
-            snake.reset()               
-            screen.fill(BOARD_BACKGROUND_COLOR)  
+        if snake.get_head_position() in snake.positions[1:]:
+            snake.reset()
+            screen.fill(BOARD_BACKGROUND_COLOR)
 
-        apple.draw()            
-        snake.draw()  
+        apple.draw()
+        snake.draw()
         pygame.display.update()
 
 
