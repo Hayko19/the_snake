@@ -29,6 +29,7 @@ SNAKE_COLOR = (0, 255, 0)
 # Скорость движения змейки:
 SPEED = 20
 
+COLOR = (255, 255, 255)
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
@@ -43,7 +44,7 @@ clock = pygame.time.Clock()
 class GameObject():
     """Родительский класс."""
 
-    def __init__(self, color=(255, 255, 255)) -> None:
+    def __init__(self, color=COLOR) -> None:
         self.position = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
         self.body_color = color
 
